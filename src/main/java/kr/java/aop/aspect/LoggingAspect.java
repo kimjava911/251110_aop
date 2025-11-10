@@ -3,6 +3,7 @@ package kr.java.aop.aspect;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -41,8 +42,45 @@ public class LoggingAspect {
     }
 
     @Before("@within(org.springframework.stereotype.Service)")
-    public void beforeService() {
-        System.out.println("[BEFORE+@within] Service 달림");
+    public void beforeService(JoinPoint jp) {
+        System.out.println("[BEFORE+@within] Service 달림 %s".formatted(jp.getSignature().getName()));
     }
 
+    @Before("@within(org.springframework.stereotype.Service) && args(String)")
+    public void beforeServiceString(JoinPoint jp) {
+        System.out.println("[BEFORE+@within] Service + String 포함 %s".formatted(jp.getSignature().getName()));
+    }
+
+    // 포인트컷 조합
+    // && -> and, || -> or, ! -> not
+//    @Pointcut("exeuction(* kr.java.aop..service..*(..))") // 메서드
+    @Pointcut("within(kr.java.aop..service.*)") // 클래스
+//    @Pointcut("@within(org.springframework.stereotype.Service)")
+    private void serviceLayer() {}
+
+    @Pointcut("@within(org.springframework.stereotype.Controller)")
+    private void controllerLayer() {}
+
+    @Pointcut("args(String, ..)")
+    private void argsString() {}
+
+    @Before("serviceLayer() && argsString()")
+    public void serviceWithString(JoinPoint jp) {
+        System.out.println(jp);
+        // 서비스 계층의 String을 포함한 메서드
+        System.out.println("서비스 계층의 String을 포함한 메서드 (포인트컷 조합)");
+    }
+
+    @Before("serviceLayer() || controllerLayer()")
+    public void serviceOrController(JoinPoint jp) {
+        System.out.println(jp);
+        System.out.println("서비스나 컨트롤러 계층");
+    }
+
+    @Before("serviceLayer() && !argsString()")
+    public void serviceWithNotString(JoinPoint jp) {
+        System.out.println(jp);
+        // 서비스 계층의 String을 포함한 메서드
+        System.out.println("서비스 계층의 String을 포함하지 않은 메서드 (포인트컷 조합)");
+    }
 }
