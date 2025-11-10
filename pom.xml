@@ -26,18 +26,18 @@
         </dependency>
         <!-- https://mvnrepository.com/ -->
         <!-- https://mvnrepository.com/artifact/org.springframework/spring-webmvc -->
+        <!-- context, aop 포함 -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>6.2.12</version>
         </dependency>
-        <!-- context, aop 포함 -->
-        <!-- https://mvnrepository.com/artifact/org.aspectj/aspectjweaver -->
+        <!-- aspectj weaver 포함 -->
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-aspects -->
         <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjweaver</artifactId>
-            <version>1.9.25</version>
-            <scope>runtime</scope>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
+            <version>6.2.12</version>
         </dependency>
     </dependencies>
 
