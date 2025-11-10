@@ -1,11 +1,10 @@
 package kr.java.aop.aspect;
 
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.annotation.*;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 
 @Aspect
 @Component
@@ -82,5 +81,49 @@ public class LoggingAspect {
         System.out.println(jp);
         // 서비스 계층의 String을 포함한 메서드
         System.out.println("서비스 계층의 String을 포함하지 않은 메서드 (포인트컷 조합)");
+    }
+
+    // advice
+    // @Before : 메서드 실행 전
+    // @After : 메서드 종료 후 -> finally
+    // @AfterReturning : 정상적으로 실행
+    // @AfterThrowing : 중간에 예외 발생 시
+    // @Around : 전후 제어 <- Before, After 쪼갤 수 있으면 쪼개서 사용하는게 낫다
+
+    @Before("serviceLayer() || controllerLayer()")
+    public void beforeLayer(JoinPoint jp) {
+        System.out.println("beforeLayer : " + jp.toShortString());
+    }
+
+    @AfterReturning(
+            pointcut = "serviceLayer() || controllerLayer()",
+            returning = "ret")
+    public void afterRetLayer(JoinPoint jp, Object ret) {
+        System.out.println("afterRetLayer : " + jp.toShortString());
+        System.out.println(ret);
+    }
+
+    @AfterThrowing(
+            pointcut = "serviceLayer() || controllerLayer()",
+            throwing = "ex")
+    public void afterRetLayer(JoinPoint jp, Exception ex) {
+        System.out.println("afterThrLayer : " + jp.toShortString());
+        System.out.println(ex.getMessage());
+    }
+
+    @AfterReturning("serviceLayer() || controllerLayer()")
+    public void afterLayer(JoinPoint jp) {
+        System.out.println("afterLayer : " + jp.toShortString());
+    }
+
+    @Pointcut("args(value, ..)")
+    private void argsString2(String value) {}
+
+    @Before(value = "serviceLayer() && argsString2(value)", argNames = "jp,value")
+    public void serviceWithString2(JoinPoint jp, String value) {
+        System.out.println(jp);
+        // 서비스 계층의 String을 포함한 메서드
+        System.out.println("서비스 계층의 String을 포함한 메서드 (포인트컷 조합)");
+        System.out.println("매개변수 : " + value);
     }
 }

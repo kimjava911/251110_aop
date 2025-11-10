@@ -26,6 +26,7 @@ public class ProductController {
 //    public String product() {
     public String productPage() {
 //        System.out.println("product");
+        productService.error(); // view를 리턴하지 못함
         return "product";
     }
 }
